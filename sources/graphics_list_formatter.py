@@ -65,9 +65,23 @@ def make_list(data: List = None, names: List[str] = None, texts: List[str] = Non
     :returns: The string representation of the list.
     """
     if data is not None:
-        names = [value for item in data for key, value in item.items() if key == "name"] if names is None else names
-        texts = [value for item in data for key, value in item.items() if key == "text"] if texts is None else texts
-        percents = [value for item in data for key, value in item.items() if key == "percent"] if percents is None else percents
+        _names = []
+        _texts = []
+        _percents = []
+        for item in data:
+            if item["name"] not in EM.IGNORED_PROJECTS:
+                if names is None:
+                    _names.append(item["name"])
+
+                if texts is None:
+                    _texts.append(item["text"])
+
+                if percents is None:
+                    _percents.append(item["percent"])
+
+        names = _names if names is None else names
+        texts = _texts if texts is None else texts
+        percents = _percents if percents is None else percents
 
     data = list(zip(names, texts, percents))
     top_data = sorted(data[:top_num], key=lambda record: record[2], reverse=True) if sort else data[:top_num]
