@@ -59,8 +59,8 @@ class EnvironmentManager:
 
     LOCALE = getenv("INPUT_LOCALE", "en")
     UPDATED_DATE_FORMAT = getenv("INPUT_UPDATED_DATE_FORMAT", "%d/%m/%Y %H:%M:%S")
-    IGNORED_REPOS = getenv("INPUT_IGNORED_REPOS", "").replace(" ", "").split(",")
-    IGNORED_PROJECTS = getenv("INPUT_IGNORED_PROJECTS", "").split(",")
+    IGNORED_REPOS = [x.strip() for x in getenv("INPUT_IGNORED_REPOS", "").split(",") if x.strip()]
+    IGNORED_PROJECTS = [x.strip() for x in getenv("INPUT_IGNORED_PROJECTS", "").split(",") if x.strip()]
     _raw_max_repos = getenv("INPUT_MAX_REPOS", "0").strip()
     _raw_max_cap = getenv("INPUT_MAX_CAP", "0").strip()
     # Prefer MAX_REPOS; fall back to MAX_CAP for compatibility.

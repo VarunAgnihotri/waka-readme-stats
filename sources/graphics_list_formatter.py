@@ -81,7 +81,15 @@ def make_list(data: List = None, names: List[str] = None, texts: List[str] = Non
 
         names = _names if names is None else names
         texts = _texts if texts is None else texts
-        percents = _percents if percents is None else percents
+        if percents is None:
+            if len(_names) < len(data):
+                total_percent = sum(_percents)
+                if total_percent > 0:
+                    percents = [round((p / total_percent) * 100, 2) for p in _percents]
+                else:
+                    percents = _percents
+            else:
+                percents = _percents
 
     data = list(zip(names, texts, percents))
     top_data = sorted(data[:top_num], key=lambda record: record[2], reverse=True) if sort else data[:top_num]
@@ -142,12 +150,11 @@ def make_language_per_repo_list(repositories: Dict) -> str:
     :returns: string representation of statistics.
     """
     language_count = dict()
-    repos_with_language = [repo for repo in repositories if repo["primaryLanguage"] is not None]
+    repos_with_language = [repo for repo in repositories if repo["primaryLanguage"] is not None and repo["name"] not in EM.IGNORED_REPOS]
     for repo in repos_with_language:
-        if repo["name"] not in EM.IGNORED_REPOS:
-            language = repo["primaryLanguage"]["name"]
-            language_count[language] = language_count.get(language, {"count": 0})
-            language_count[language]["count"] += 1
+        language = repo["primaryLanguage"]["name"]
+        language_count[language] = language_count.get(language, {"count": 0})
+        language_count[language]["count"] += 1
 
     names = list(language_count.keys())
     texts = [f"{language_count[lang]['count']} {'repo' if language_count[lang]['count'] == 1 else 'repos'}" for lang in names]
